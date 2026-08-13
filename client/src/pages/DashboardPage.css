@@ -1,0 +1,50 @@
+.dashboard-grid {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.dashboard-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  text-align: left;
+}
+
+.dashboard-item svg {
+  color: var(--accent);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.dashboard-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.dashboard-value {
+  display: block;
+  color: var(--text-h);
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.dashboard-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dashboard-actions .auth-link {
+  text-align: center;
+  padding: 10px;
+}

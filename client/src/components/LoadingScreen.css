@@ -1,0 +1,19 @@
+.loading-screen {
+  min-height: 100svh;
+  display: grid;
+  place-content: center;
+  gap: 12px;
+  color: var(--text);
+  text-align: center;
+}
+
+.loading-icon {
+  justify-self: center;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
