@@ -1,4 +1,4 @@
-import type { AuditAction, Role } from "../generated/prisma/client.js";
+import type { AuditAction, Prisma, Role } from "../generated/prisma/client.js";
 import { prisma } from "../lib/prisma.js";
 import { AuthError, type SafeUser } from "./auth.service.js";
 
@@ -39,7 +39,7 @@ async function writeAuditLog(
   action: AuditAction,
   userId: string | null,
   meta: RequestMeta,
-  metadata?: Record<string, unknown>,
+  metadata?: Prisma.InputJsonValue,
 ): Promise<void> {
   await prisma.auditLog.create({
     data: {
