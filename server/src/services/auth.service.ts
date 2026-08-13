@@ -31,8 +31,8 @@ export class AuthError extends Error {
 }
 
 type RequestMeta = {
-  ipAddress?: string;
-  userAgent?: string;
+  ipAddress?: string | undefined;
+  userAgent?: string | undefined;
 };
 
 async function writeAuditLog(
@@ -47,7 +47,7 @@ async function writeAuditLog(
       userId,
       ipAddress: meta.ipAddress ?? null,
       userAgent: meta.userAgent ?? null,
-      metadata: metadata ?? undefined,
+      ...(metadata !== undefined ? { metadata } : {}),
     },
   });
 }
@@ -140,13 +140,9 @@ export async function loginUser(
   const email = normalizeEmail(input.email);
   const user = await prisma.user.findUnique({ where: { email } });
 
-  const invalidCredentials = (): never => {
-    throw new AuthError("Invalid email or password.", 401, "INVALID_CREDENTIALS");
-  };
-
   if (!user) {
     await writeAuditLog("LOGIN_FAILED", null, meta, { email });
-    invalidCredentials();
+    throw new AuthError("Invalid email or password.", 401, "INVALID_CREDENTIALS");
   }
 
   if (!user.isActive) {
@@ -174,7 +170,7 @@ export async function loginUser(
     });
 
     await writeAuditLog("LOGIN_FAILED", user.id, meta, { attempts });
-    invalidCredentials();
+    throw new AuthError("Invalid email or password.", 401, "INVALID_CREDENTIALS");
   }
 
   await prisma.user.update({

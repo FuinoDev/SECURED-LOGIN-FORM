@@ -1,5 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
+import { AdminRoute } from './components/AdminRoute'
 import { GuestRoute, ProtectedRoute } from './components/ProtectedRoute'
+import { AdminPage } from './pages/AdminPage'
 import { ChangePasswordPage } from './pages/ChangePasswordPage'
 import { DashboardPage } from './pages/DashboardPage'
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage'
@@ -32,6 +34,10 @@ export default function App() {
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/change-password" element={<ChangePasswordPage />} />
+      </Route>
+
+      <Route element={<AdminRoute />}>
+        <Route path="/admin" element={<AdminPage />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/login" replace />} />

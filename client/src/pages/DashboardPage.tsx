@@ -83,6 +83,7 @@ export function DashboardPage() {
       </div>
 
       <div className="dashboard-actions">
+        {user.role === 'ADMIN' ? <AuthLink to="/admin">Admin panel</AuthLink> : null}
         <AuthLink to="/change-password">Change password</AuthLink>
         <Button type="button" className="btn-secondary" loading={loading} onClick={handleLogout}>
           Sign out

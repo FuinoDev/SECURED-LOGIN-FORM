@@ -8,7 +8,7 @@ type EmailPayload = {
 };
 
 async function sendEmail(payload: EmailPayload): Promise<void> {
-  if (env.NODE_ENV === "development") {
+  if (env.NODE_ENV === "development" || env.NODE_ENV === "test") {
     console.info("[email:dev]", {
       to: payload.to,
       subject: payload.subject,

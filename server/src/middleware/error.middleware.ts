@@ -46,6 +46,20 @@ export function errorHandler(
     return;
   }
 
+  if (error instanceof SyntaxError && "body" in error) {
+    res.status(400).json({ error: "Invalid JSON." });
+    return;
+  }
+
+  if (
+    error instanceof Error &&
+    "type" in error &&
+    (error as Error & { type?: string }).type === "entity.too.large"
+  ) {
+    res.status(413).json({ error: "Request entity too large." });
+    return;
+  }
+
   console.error("[error]", error);
   res.status(500).json({ error: "Something went wrong." });
 }

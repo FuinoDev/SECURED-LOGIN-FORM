@@ -7,6 +7,9 @@
     "dev:client": "npm run dev --prefix client",
     "dev": "npm run dev:server",
     "build:client": "npm run build --prefix client",
-    "build:server": "npm run build --prefix server"
+    "build:server": "npm run build --prefix server",
+    "build": "npm run build:server && npm run build:client",
+    "test": "npm run test --prefix server",
+    "db:setup": "npm run db:generate --prefix server && npm run db:migrate --prefix server && npm run db:seed --prefix server"
   }
 }
