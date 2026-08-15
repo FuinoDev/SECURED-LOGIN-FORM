@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Alert } from '../components/Alert'
 import { AuthLayout, AuthLink } from '../components/AuthLayout'
 import { Button } from '../components/Button'
+import { DevEmailHint } from '../components/DevEmailHint'
 import { FormField } from '../components/FormField'
 import { PasswordField } from '../components/PasswordField'
 import { useAuth } from '../context/useAuth'
@@ -59,6 +60,7 @@ export function RegisterPage() {
       }
     >
       <form className="auth-form" onSubmit={handleSubmit} noValidate>
+        <DevEmailHint />
         {error ? <Alert variant="error">{error}</Alert> : null}
         {success ? <Alert variant="success">{success}</Alert> : null}
 
