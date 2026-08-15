@@ -30,6 +30,48 @@ export class AuthError extends Error {
   }
 }
 
+const REGISTRATION_MESSAGE =
+  "If this email is available, a verification link has been sent. Check your inbox to continue.";
+
+const REGISTRATION_MESSAGE_DEV =
+  "Account created. Your verification link was printed in the API server terminal — look for [email:dev] and open the verify-email URL.";
+
+const RESEND_VERIFICATION_MESSAGE =
+  "If an account exists for that email, a verification link has been sent.";
+
+const RESEND_VERIFICATION_MESSAGE_DEV =
+  "Verification link sent. Check the API server terminal for [email:dev] and open the verify-email URL.";
+
+const PASSWORD_RESET_MESSAGE =
+  "If an account exists for that email, password reset instructions have been sent.";
+
+const PASSWORD_RESET_MESSAGE_DEV =
+  "Password reset link sent. Check the API server terminal for [email:dev] and open the reset-password URL.";
+
+function getRegistrationMessage(emailSent: boolean): string {
+  if (env.NODE_ENV === "development" && emailSent) {
+    return REGISTRATION_MESSAGE_DEV;
+  }
+
+  return REGISTRATION_MESSAGE;
+}
+
+function getResendVerificationMessage(emailSent: boolean): string {
+  if (env.NODE_ENV === "development" && emailSent) {
+    return RESEND_VERIFICATION_MESSAGE_DEV;
+  }
+
+  return RESEND_VERIFICATION_MESSAGE;
+}
+
+function getPasswordResetMessage(emailSent: boolean): string {
+  if (env.NODE_ENV === "development" && emailSent) {
+    return PASSWORD_RESET_MESSAGE_DEV;
+  }
+
+  return PASSWORD_RESET_MESSAGE;
+}
+
 type RequestMeta = {
   ipAddress?: string | undefined;
   userAgent?: string | undefined;
@@ -90,10 +132,7 @@ export async function registerUser(
   const existing = await prisma.user.findUnique({ where: { email } });
 
   if (existing) {
-    return {
-      message:
-        "If this email is available, a verification link has been sent. Check your inbox to continue.",
-    };
+    return { message: getRegistrationMessage(false) };
   }
 
   let passwordHash: string;
@@ -127,10 +166,7 @@ export async function registerUser(
   await sendVerificationEmail(user.email, user.name, rawToken);
   await writeAuditLog("REGISTRATION", user.id, meta);
 
-  return {
-    message:
-      "If this email is available, a verification link has been sent. Check your inbox to continue.",
-  };
+  return { message: getRegistrationMessage(true) };
 }
 
 export async function loginUser(
@@ -283,12 +319,8 @@ export async function resendVerificationEmail(
   const email = normalizeEmail(emailInput);
   const user = await prisma.user.findUnique({ where: { email } });
 
-  const genericMessage = {
-    message: "If an account exists for that email, a verification link has been sent.",
-  };
-
   if (!user || user.emailVerified) {
-    return genericMessage;
+    return { message: getResendVerificationMessage(false) };
   }
 
   await prisma.verificationToken.deleteMany({
@@ -308,7 +340,7 @@ export async function resendVerificationEmail(
   await sendVerificationEmail(user.email, user.name, rawToken);
   await writeAuditLog("REGISTRATION", user.id, meta, { resend: true });
 
-  return genericMessage;
+  return { message: getResendVerificationMessage(true) };
 }
 
 export async function requestPasswordReset(
@@ -318,12 +350,8 @@ export async function requestPasswordReset(
   const email = normalizeEmail(emailInput);
   const user = await prisma.user.findUnique({ where: { email } });
 
-  const genericMessage = {
-    message: "If an account exists for that email, password reset instructions have been sent.",
-  };
-
   if (!user || !user.isActive) {
-    return genericMessage;
+    return { message: getPasswordResetMessage(false) };
   }
 
   await prisma.passwordResetToken.deleteMany({
@@ -343,7 +371,7 @@ export async function requestPasswordReset(
   await sendPasswordResetEmail(user.email, user.name, rawToken);
   await writeAuditLog("PASSWORD_RESET_REQUESTED", user.id, meta);
 
-  return genericMessage;
+  return { message: getPasswordResetMessage(true) };
 }
 
 export async function resetPassword(

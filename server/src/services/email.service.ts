@@ -7,13 +7,21 @@ type EmailPayload = {
   html: string;
 };
 
+function logDevEmail(payload: EmailPayload): void {
+  const linkMatch = payload.text.match(/https?:\/\/\S+/);
+
+  console.info("\n[email:dev] ────────────────────────────────────────");
+  console.info(`[email:dev] To: ${payload.to}`);
+  console.info(`[email:dev] Subject: ${payload.subject}`);
+  if (linkMatch) {
+    console.info(`[email:dev] Link: ${linkMatch[0]}`);
+  }
+  console.info("[email:dev] ────────────────────────────────────────\n");
+}
+
 async function sendEmail(payload: EmailPayload): Promise<void> {
   if (env.NODE_ENV === "development" || env.NODE_ENV === "test") {
-    console.info("[email:dev]", {
-      to: payload.to,
-      subject: payload.subject,
-      text: payload.text,
-    });
+    logDevEmail(payload);
     return;
   }
 
